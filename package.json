@@ -1,0 +1,24 @@
+{
+  "name": "wildtreenode",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "firebase": "^3.7.0",
+    "nodemailer": "^3.1.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daynewright/WildTree-Node.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/daynewright/WildTree-Node/issues"
+  },
+  "homepage": "https://github.com/daynewright/WildTree-Node#readme"
+}
