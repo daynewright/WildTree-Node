@@ -2,7 +2,8 @@
 
 const nodemailer = require('nodemailer');
 const firebase = require('firebase');
-var config = require('./config.js')
+var config = require('./config.js');
+var sender = require('./sender.js');
 
 firebase.initializeApp(config);
 
@@ -14,8 +15,8 @@ fbOrders.on('child_added', function(snapshot) {
   let smtpTransport = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: "wildtreeapp@gmail.com",
-        pass: "wildtree4L"
+        user: sender.user,
+        pass: sender.pass
       }
   });
 
