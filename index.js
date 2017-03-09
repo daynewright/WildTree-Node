@@ -2,6 +2,7 @@
 
 // include configuration and dependencies
 const nodemailer = require('nodemailer');
+const schedule = require('node-schedule');
 const firebase = require('firebase');
 const moment = require('moment');
 const config = require('./config.js');
@@ -13,6 +14,7 @@ firebase.initializeApp(config);
 const fbOrders = firebase.database().ref('/orders');
 const fbWorkshops = firebase.database().ref('/workshops');
 const fbUsers = firebase.database().ref('/users');
+const fbMessages = firebase.database().ref('/conversations');
 
 console.log('Wildtree email server running!');
 
@@ -83,6 +85,34 @@ fbWorkshops.on('child_changed', (snapshot) => {
     }
 });
 
+//CHECK FOR UNREAD MESSAGES DAILY
+var runJob = schedule.scheduleJob({hour: 20}, function() {
+  fbMessages.on('child_added', (snapshot) => {
+     const convo = snapshot.val();
+     const lastMsg = convo.messages[convo.messages.length-1];
+     let sender = {};
+     let receiver = {};
+
+     if(!lastMsg.read){
+       if(lastMsg.authorId === convo.fullUsers[1].userId){
+        receiver = convo.fullUsers[0];
+        sender = convo.fullUsers[1];
+       } else {
+        receiver = convo.fullUsers[1];
+        sender = convo.fullUsers[0];
+       }
+       const emailObj = {
+         subject: `You have unread messages`,
+         message: `You currently have at least one unread message from ${sender.name} (${sender.email}).\n\nMESSAGE: "${lastMsg.text}"\n\n(*Replying to this email will go to the author, but does not post in the app.*)`,
+         sendTo: receiver.email,
+         replyTo: sender.email
+       };
+       sendEmail(emailObj);
+     }
+  });
+  console.log('**testing scheduled job**');
+});
+
 //Get users helper function
 let getUsers = (userId) => {
   return new Promise((resolve)=> {
@@ -119,7 +149,8 @@ var sendEmail = function(emailObj) {
     from: "WildTreeApp <wildtreeApp@gmail.com>",
     to: emailObj.sendTo,
     subject: emailObj.subject,
-    text: emailObj.message
+    text: emailObj.message,
+    replyTo: emailObj.replyTo || "wildtreeApp@gmail.com"
   };
 
   smtpTransport.sendMail(mailOptions, function(error, response){
