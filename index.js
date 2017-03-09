@@ -14,6 +14,8 @@ const fbOrders = firebase.database().ref('/orders');
 const fbWorkshops = firebase.database().ref('/workshops');
 const fbUsers = firebase.database().ref('/users');
 
+console.log('Wildtree email server running!');
+
 // CHECKS CHANGES ON ORDERS
 fbOrders.on('child_changed', (snapshot) => {
   let userData = snapshot.val();
