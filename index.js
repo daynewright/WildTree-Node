@@ -86,7 +86,7 @@ fbWorkshops.on('child_changed', (snapshot) => {
 });
 
 //CHECK FOR UNREAD MESSAGES DAILY
-var runJob = schedule.scheduleJob({hour: 20}, function() {
+var runJob = schedule.scheduleJob({hour: 20, minute: 5}, function() {
   fbMessages.on('child_added', (snapshot) => {
      const convo = snapshot.val();
      const lastMsg = convo.messages[convo.messages.length-1];
